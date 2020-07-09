@@ -1,39 +1,40 @@
-1. почему использовал Http POST вместо GET: GET имеет ограничение по символам в URI,
-а передаваемая начальная ссылка может иметь уже предельное значение символов. Аналогичная проблема с текстом
-Хочу отметь, что есть и другие решения этой проблемы, но я выбрал самый простой вариант
+1. Why used Http POST instead of GET: GET has a character limit in the URI,
+  and the transmitted root link may already have a character limit. Similar problem with text
+I want to note that there are other solutions to this problem, but I chose the simplest option
 
 2. Http status:
-404 Not Found - возвращать эту ошибку предлагаю в нескольких вариантах.
-Первый, если начальная ссылка не найдена.
-Второй, при выполнение, нашего алгоритма, когда мы скачиваем HTML Document, а нам возвращается ошибка
-например такая 'Too many redirects occurred trying to load URL' хотя может тут уместнее будет, 410 Gone
-либо 500 Internal Server Error
+   404 Not Found - I suggest returning this error in several options.
+   Firstly, if jsoup not found html Document on root link.
+Secondly, after executing algorithm and load HTML document may returned error
+   for example, “Too many redirects occurred while trying to load the URL”, may be preferably returned 410 Gone
+   either 500 Internal server error
 
-400 Bad Request - это ошибку будем возвращать при валидации полей и если поля обязательное
+   400 Bad Request: return this error when validating the fields
+   and if you do not fill in the required fields
 
-3. То что хотел сделать и не успел, хотел подключить WebSocket и создать Spring Events,
-чтобы в Runtime отправлять на клиента какие ссылки сейчаc обрабатываются и какие error произошли.
-Второй вариант использовать broadcast manager 'Kafka, RabbitMQ'
-выбор broadcast manager зависит от количества обрабатываемой информации
+3. What I wanted to do and did not have time, I wanted to implement `WebSocket` and `Spring Events`
+   and to runtime return a result or error message
+Second option to use message broker 'Kafka or RabbitMQ'
+   The choice of broadcast manager depends on the amount of information processed.
 
-4. Для тестирования предлагаю использовать spock framework.
-Класс ImplHtmlDocumentServices покрываем юнит тестами и так как у spock,
-есть возможность в одном тесте реализовать несколько кейсов, так мы реализуем несколько позитивных кейсов.
-Далее нам нужно будет проверить на error наш сервис,
-например один из них MalformedURLException когда на вход получаем битый URL.
+4. Implement unit tests for this class `HtmlDocumentServiceImpl`, and use Spock annotation @Unroll
+   it is possible to implement several cases in one test, so we implement several positive cases.
+Next, we will need to check our service for error,
+   for example, one of them error is MalformedURLException when we get a invalid URL
 
-Компонентными тестами покрываем класс HtmlDocumentController? также как и в юнит тестах,
-пишем пару позитивных кейсов, а остальные проверяем статусы ошибок например 'Not Found'
+   For the `HtmlDocumentController` class implement component tests
+   How and unit test we are implement positive cases and negative case.
+   For negative case check Http status, example check status “Not Found”
 
-И наше API нужно покрыть интеграционными тестами
+   And implement integration tests for API
 
-Еще предлагаю использовать подход в тестирование как:
-Классов эквивалентности - по той причине, что кейсов может быть очень много, а если на все напишем тесты,
-то столкнёмся с двумя проблемами, первое наши тесты будут долго отрабатывать,
-второе чем больше тестов тем тяжелее их поддерживать.
+   I also suggest using the testing approach as:
+   Equivalence classes -  if implement tests for all case,
+   we have two problems
+   Firstly tests may run a long time,
+   Second, the more tests, the harder it is to support
 
-5. Дополнительно:
-В приложений, нужно ограничить передаваемое число для количества потоков и обязательно нужно написать валидацию на root URL.
-Нужно создать СI на jenkins, где нужно проверить сборку приложения и для запуска тестов
-
-На даном этапе возвращаю Map<String, Integer> для тестирования приложения через Postman
+5. Additionally:
+   Needs set a limited number to create thread
+   Implement validation root URL.
+   create CI on Jenkins, and check the build of applications and to run tests
