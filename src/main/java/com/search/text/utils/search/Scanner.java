@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
 @Component
 public class Scanner {
 
-    public synchronized int scanMatchesText(final Document document, final String text) {
+    public int findTextOccurrencesCount(final Document document, final String text) {
         String htmlAsString = document.baseUri() + " " + document.text();
 
         return StringUtils.countOccurrencesOf(htmlAsString, text);
 
     }
 
-    public synchronized List<String> findLinks(final Document document) {
+    public List<String> findLinks(final Document document) {
         Elements elements = document.select("a[href]");
 
         return elements.stream()
